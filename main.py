@@ -69,6 +69,10 @@ class Parser:
             if text.startswith(option):
                 token = tokens.NumericToken(self.numerals[option], option)
                 rest = text[len(option):]
+
+                # Consume 'a' at the start (tritri-a-kontan)
+                if rest[0] == 'a': rest = rest[1:]
+                
                 # There is a issue with first ten alkans (-an) is overlapping with (...a-)
                 # rest if rest != 'n' else 'an' is a fix
                 return token, rest if rest != 'n' else 'an'
