@@ -1,0 +1,38 @@
+1,  mono
+2,  di
+3,  tri
+4,  tetra
+5,  penta,pent
+6,  heksa,heksa
+7,  hepta,hept
+8,  okta, okt
+9,  nona, non
+0,  ei
+10, dek
+20, koz
+
+# Multipliers
+10,  kont
+100, kt
+
+# Functional groups
+alkan,  an
+alken,  en
+alkin,  yn
+branch, ylo
+junction, o
+residue, a
+
+# Last group
+F , fluoro
+Cl, chloro
+Br, bromo
+I , jodo
+At, astato
+Ts, teneso
+
+# Exeptions
+1, met
+2, et
+3, prop
+4, but
