@@ -1,6 +1,9 @@
 from dataclasses import dataclass
+from collections import namedtuple
 from enum import Enum, auto
 import re, csv, pprint
+
+IUPAC_Rule = namedtuple('IUPAC_Rule', ['type', 'value'])
 
 # This holds regexes for primary parsing
 PRIMARY_TOKEN_TABLE = {
@@ -12,6 +15,12 @@ class PrimaryTokenType(Enum):
     LOCANT: str = 'locant'
     RAW_TEXT: str = 'raw_text'
 
+    DIGIT: str = 'digit'
+    GROUP: str = 'group'
+    FUNCTIONAL: str = 'functional'
+    MULTIPLIER: str = 'multiplier'
+    ELEMENT: str = 'element'
+
 @dataclass
 class PrimaryToken:
     type: PrimaryTokenType
@@ -19,6 +28,19 @@ class PrimaryToken:
 
     def __repr__(self) -> str:
         return f'{self.type}: {self.value}'
+
+class TokenType(Enum):
+
+    LOCANT: str = 'locant'
+    DIGIT: str = 'digit'
+    GROUP: str = 'group'
+    MULTIPLIER: str = 'multiplier'
+    ELEMENT: str = 'element' 
+
+@dataclass
+class Token: 
+    type: TokenType
+    data: list
 
 class GenericParserError(Exception):
 
@@ -28,21 +50,30 @@ class GenericParserError(Exception):
 class Tokenizer:
 
     @staticmethod
-    def load_affixes(path: str) -> dict[str, int]:
+    def load_affixes(path: str) -> dict[str, IUPAC_Rule]:
         output = {}
         with open(path) as file:
             raw = csv.reader(file)
 
             # Scan each row and get all options
             for row in raw:
-                if not row: continue
-                number, *rest = row
+                if len(row) <= 1: continue
 
-                if number == '#': continue
+                identifier, _type, *rest = [word.strip() for word in row]
 
                 for option in rest:
-                    output[option.strip()] = number.strip()
+                    output[option] = IUPAC_Rule(PrimaryTokenType(_type), identifier)
 
+        return output
+
+    @staticmethod
+    def flatten(array: list) -> list:
+        output = []
+        for element in array:
+            if type(element) == list:
+                output.extend(Tokenizer.flatten(element))
+            else:
+                output.append(element)
         return output
 
     def __init__(self, ptt: dict[str, str]) -> None:
@@ -78,28 +109,33 @@ class Tokenizer:
         for index, token in enumerate(token_string):
             match token.type:
                 case PrimaryTokenType.LOCANT:
-                    pass
+                    output[index] = self.parse_locant(token)
                 case PrimaryTokenType.RAW_TEXT:
                     output[index] = self.parse_raw_text(token)
 
-        return output
+        return Tokenizer.flatten(output)
 
     def parse_raw_text(self, token: PrimaryToken):
         output = []
-        raw = token.value[::1]
+        raw = token.value
         while raw:
-
-            for affix, value in self.affixes.items():
+            for affix, rule in self.affixes.items():
                 if raw.startswith(affix):
                     raw = raw[len(affix):]
                     # This is to prevent eating up -a from alkanes
                     if raw == 'n': raw = affix[-1] + raw
-                    output.append(value)
+                    # Get rid of syntactic sugar from Polish names
+                    if rule.type == PrimaryTokenType.FUNCTIONAL: break
+                    output.append(Token(rule.type, [rule.value, ]))
                     break
             else:
                 raise GenericParserError(f'No pattern matching \"{raw}\"')
         return output
-            
+
+    def parse_locant(self, token: PrimaryToken):
+        pattern = re.compile('\d+')
+
+        return Token(TokenType.LOCANT, pattern.findall(token.value))
 
 if __name__ == '__main__':
 
@@ -117,12 +153,17 @@ if __name__ == '__main__':
         '2,2-dijododekan',
         '4-butylononan',
         'tridekan',
-        'tritriakontan'
+        'tritriakontan',
+        '3-pentanon',
+        'butan-2-on',
+        '4-etynodekan',
+        '5-etenodekan',
     ]
 
     for compound in compounds:
+
         pts = tokenizer.pre_tokenize(compound)
-        print(pts)
+        #print(pts)
         ts = tokenizer.tokenize(pts)
         pprint.pprint(ts, indent = 4)
         print()

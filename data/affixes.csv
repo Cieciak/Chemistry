@@ -1,38 +1,41 @@
-1,  mono
-2,  di
-3,  tri
-4,  tetra
-5,  penta,pent
-6,  heksa,heksa
-7,  hepta,hept
-8,  okta, okt
-9,  nona, non
-0,  ei
-10, dek
-20, koz
-
-# Multipliers
-10,  kont
-100, kt
+# Numerals
+1,  digit, mono
+2,  digit, di
+3,  digit, tri
+4,  digit, tetra,tetr
+5,  digit, penta,pent
+6,  digit, heksa,heks
+7,  digit, hepta,hept
+8,  digit, okta, okt
+9,  digit, nona, non
+0,  digit, ei
+10, digit, dek
+20, digit, koz
 
 # Functional groups
-alkan,  an
-alken,  en
-alkin,  yn
-branch, ylo
-junction, o
-residue, a
+alkan, group,  an, yl
+alken, group,  en
+alkin, group,  yn
+keton, group,  on
+
+# Junctions
+residue,  functional, a
+junction, functional, o
+
+# Multipliers
+10,  multiplier, kont
+100, multiplier, kt
 
 # Last group
-F , fluoro
-Cl, chloro
-Br, bromo
-I , jodo
-At, astato
-Ts, teneso
+F , element, fluoro
+Cl, element, chloro
+Br, element, bromo
+I , element, jodo
+At, element, astato
+Ts, element, teneso
 
 # Exeptions
-1, met
-2, et
-3, prop
-4, but
+1, digit, met
+2, digit, et
+3, digit, prop
+4, digit, but
