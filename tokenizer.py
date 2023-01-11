@@ -148,7 +148,6 @@ class Node:
 
 class Molecule: 
 
-
     def __init__(self, tokens: list[Token]) -> None:
         self.tokens = tokens[::-1]
 
@@ -281,8 +280,6 @@ class Molecule:
                     self.proto_number = 0
                     self.number_search = False
 
-
-
 if __name__ == '__main__':
 
     tokenizer = Tokenizer(PRIMARY_TOKEN_TABLE)
@@ -294,7 +291,7 @@ if __name__ == '__main__':
         'et-1-yn',
         'but-1-en',
         'non-1-en',
-        #'1,2-dimetylobutan',
+        #'2,3-dimetylobutan',
         '1-metylo-2,3-dibromopentan',
         '2,2-dijododekan',
         '4-butylononan',
@@ -305,6 +302,7 @@ if __name__ == '__main__':
         'pentan',
         'pentadekan',
         'etan',
+        '2,3-dijodooktan'
     ]
 
     for compound in compounds:
@@ -317,4 +315,4 @@ if __name__ == '__main__':
 
         mol = Molecule(ts)
         t = mol.generate()
-        print(t)
+        print(compound, '\n', t, '\n')
